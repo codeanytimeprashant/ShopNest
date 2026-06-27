@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 router.get("/",function(req,res){
-    res.send("Hey, its working");
+    res.send("Hey, its working for users");
 })
 
 module.exports = router;
