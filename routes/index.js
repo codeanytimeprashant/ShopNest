@@ -6,7 +6,7 @@ const productModel = require("../models/product-model");
 
 router.get("/", function (req, res) {
     let error = req.flash("error");
-    res.render("index", { error });
+    res.render("index", { error ,loggedin : false});
 });
 
 router.get("/shop", isLoggedIn, async function (req, res) {
@@ -17,5 +17,7 @@ router.get("/shop", isLoggedIn, async function (req, res) {
         products
     });
 });
+
+
 
 module.exports = router;

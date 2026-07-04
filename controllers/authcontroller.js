@@ -41,10 +41,15 @@ module.exports.loginUser = async function(req,res){
         if(result){
             let token = generateToken(user);
             res.cookie("token",token);
-            res.send("User logged in successfully");
+            res.redirect("/shop");
         }
         else{
             res.send("Email or password is incorrect");
         }
     })
+}
+
+module.exports.logoutUser = function(req,res){
+  res.cookie("token","");
+  res.redirect("/");
 }

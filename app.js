@@ -15,8 +15,6 @@ const indexRouter = require('./routes/index');
 
 require('dotenv').config();
 
-console.log("JWT_KEY =", process.env.JWT_KEY);
-console.log("EXPRESS_SESSION_SECRET =", process.env.EXPRESS_SESSION_SECRET);
 
 
 app.use(express.json());
