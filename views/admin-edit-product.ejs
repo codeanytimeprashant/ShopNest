@@ -1,0 +1,155 @@
+<%- include('./partials/header') %>
+
+    <div class="min-h-screen bg-gray-50/50 flex flex-col pt-20 pb-20">
+        <div class="max-w-4xl mx-auto w-full px-4 sm:px-6 lg:px-8 mt-10">
+
+            <div class="flex items-center gap-4 mb-8">
+                <a href="/owners/admin/inventory" class="text-gray-400 hover:text-gray-700 transition-colors">
+                    <i class="ri-arrow-left-line text-xl"></i>
+                </a>
+                <div>
+                    <h1 class="text-3xl font-extrabold text-gray-900 font-sans tracking-tight">Edit Product</h1>
+                    <p class="text-gray-500 mt-0.5 text-sm font-medium">ID: <%= product._id %>
+                    </p>
+                </div>
+            </div>
+
+            <form action="/owners/admin/products/<%= product._id %>/update" method="POST" enctype="multipart/form-data"
+                class="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 flex flex-col gap-8">
+
+                <!-- ── Product Details ── -->
+                <section>
+                    <h2 class="text-lg font-bold text-gray-900 mb-5 flex items-center gap-2"><i
+                            class="ri-box-3-line text-blue-500"></i> Product Details</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+                        <div class="sm:col-span-2">
+                            <label class="block mb-1.5 text-sm font-bold text-gray-600">Product Image <span
+                                    class="text-gray-400 font-normal">(leave blank to keep current)</span></label>
+                            <% if (product.image) { %>
+                                <div class="mb-3 flex items-center gap-4">
+                                    <div class="w-20 h-20 rounded-xl overflow-hidden flex items-center justify-center p-2 shrink-0"
+                                        style="background-color: <%= product.bgcolor || '#f3f4f6' %>">
+                                        <img src="data:image/jpeg;base64,<%= product.image.toString('base64') %>"
+                                            alt="Current image" class="w-full h-full object-contain">
+                                    </div>
+                                    <span class="text-xs text-gray-400 font-medium">Current image</span>
+                                </div>
+                                <% } %>
+                                    <input name="image" type="file" accept="image/*"
+                                        class="w-full border border-gray-200 bg-gray-50 py-2.5 px-4 rounded-xl text-sm text-gray-700 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:bg-blue-600 file:text-white file:text-xs file:font-semibold cursor-pointer">
+                        </div>
+
+                        <div>
+                            <label class="block mb-1.5 text-sm font-bold text-gray-600">Product Name</label>
+                            <input name="name" type="text" value="<%= product.name %>" required
+                                class="w-full border border-gray-200 bg-gray-50 py-2.5 px-4 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-colors">
+                        </div>
+
+                        <div>
+                            <label class="block mb-1.5 text-sm font-bold text-gray-600">Brand</label>
+                            <input name="brand" type="text" value="<%= product.brand || '' %>"
+                                class="w-full border border-gray-200 bg-gray-50 py-2.5 px-4 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-colors">
+                        </div>
+
+                        <div>
+                            <label class="block mb-1.5 text-sm font-bold text-gray-600">Price (₹)</label>
+                            <input name="price" type="number" value="<%= product.price %>" required min="0"
+                                class="w-full border border-gray-200 bg-gray-50 py-2.5 px-4 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-colors">
+                        </div>
+
+                        <div>
+                            <label class="block mb-1.5 text-sm font-bold text-gray-600">Discount (₹)</label>
+                            <input name="discount" type="number" value="<%= product.discount || 0 %>" min="0"
+                                class="w-full border border-gray-200 bg-gray-50 py-2.5 px-4 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-colors">
+                        </div>
+
+                        <div>
+                            <label class="block mb-1.5 text-sm font-bold text-gray-600">Stock</label>
+                            <input name="stock" type="number" value="<%= product.stock || 0 %>" min="0"
+                                class="w-full border border-gray-200 bg-gray-50 py-2.5 px-4 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-colors">
+                        </div>
+
+                        <div>
+                            <label class="block mb-1.5 text-sm font-bold text-gray-600">Category</label>
+                            <select name="category"
+                                class="w-full border border-gray-200 bg-gray-50 py-2.5 px-4 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-colors">
+                                <option value="Fashion" <%=product.category==='Fashion' ? 'selected' : '' %>>Fashion
+                                </option>
+                                <option value="Electronics" <%=product.category==='Electronics' ? 'selected' : '' %>
+                                    >Electronics</option>
+                                <option value="Accessories" <%=product.category==='Accessories' ? 'selected' : '' %>
+                                    >Accessories</option>
+                                <option value="Footwear" <%=product.category==='Footwear' ? 'selected' : '' %>>Footwear
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="sm:col-span-2">
+                            <label class="block mb-1.5 text-sm font-bold text-gray-600">Description</label>
+                            <textarea name="description" rows="3"
+                                class="w-full border border-gray-200 bg-gray-50 py-2.5 px-4 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-colors resize-none"><%= product.description || '' %></textarea>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ── Panel Colors ── -->
+                <section>
+                    <h2 class="text-lg font-bold text-gray-900 mb-5 flex items-center gap-2"><i
+                            class="ri-palette-line text-purple-500"></i> Card Panel Colors</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                        <div>
+                            <label class="block mb-1.5 text-sm font-bold text-gray-600">Background Color</label>
+                            <div class="flex gap-2 items-center">
+                                <input type="color" id="bgColorPicker" value="<%= product.bgcolor || '#f3f4f6' %>"
+                                    class="w-10 h-10 rounded-lg border border-gray-200 cursor-pointer p-1 shrink-0"
+                                    oninput="document.getElementById('bgColorText').value = this.value">
+                                <input name="bgcolor" id="bgColorText" type="text" value="<%= product.bgcolor || '' %>"
+                                    class="flex-1 border border-gray-200 bg-gray-50 py-2.5 px-4 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-colors"
+                                    oninput="try{document.getElementById('bgColorPicker').value=this.value}catch(e){}">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block mb-1.5 text-sm font-bold text-gray-600">Panel Color</label>
+                            <div class="flex gap-2 items-center">
+                                <input type="color" id="panelColorPicker" value="<%= product.panelcolor || '#ffffff' %>"
+                                    class="w-10 h-10 rounded-lg border border-gray-200 cursor-pointer p-1 shrink-0"
+                                    oninput="document.getElementById('panelColorText').value = this.value">
+                                <input name="panelcolor" id="panelColorText" type="text"
+                                    value="<%= product.panelcolor || '' %>"
+                                    class="flex-1 border border-gray-200 bg-gray-50 py-2.5 px-4 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-colors"
+                                    oninput="try{document.getElementById('panelColorPicker').value=this.value}catch(e){}">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block mb-1.5 text-sm font-bold text-gray-600">Text Color</label>
+                            <div class="flex gap-2 items-center">
+                                <input type="color" id="textColorPicker" value="<%= product.textcolor || '#111827' %>"
+                                    class="w-10 h-10 rounded-lg border border-gray-200 cursor-pointer p-1 shrink-0"
+                                    oninput="document.getElementById('textColorText').value = this.value">
+                                <input name="textcolor" id="textColorText" type="text"
+                                    value="<%= product.textcolor || '' %>"
+                                    class="flex-1 border border-gray-200 bg-gray-50 py-2.5 px-4 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-colors"
+                                    oninput="try{document.getElementById('textColorPicker').value=this.value}catch(e){}">
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ── Actions ── -->
+                <div class="flex gap-4 pt-2 border-t border-gray-100">
+                    <button type="submit"
+                        class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-md shadow-blue-600/20 transition-colors text-sm">
+                        Save Changes
+                    </button>
+                    <a href="/owners/admin/inventory"
+                        class="px-6 py-3 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 font-semibold text-sm transition-colors text-center">
+                        Cancel
+                    </a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <%- include('./partials/footer') %>

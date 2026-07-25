@@ -1,0 +1,226 @@
+<%- include('./partials/header') %>
+
+    <div class="max-w-6xl mx-auto py-10">
+
+        <h1 class="text-3xl font-bold mb-8">
+            Checkout
+        </h1>
+
+        <% user.cart.forEach(function(item){ %>
+
+            <div class="  border rounded-lg p-5 mb-5 flex items-center justify-between ">
+
+                <div class="flex items-center gap-5">
+
+                    <img class="w-24 h-24 object-cover"
+                        src="data:image/jpeg;base64,<%= item.product.image.toString('base64') %>">
+
+                    <div>
+
+                        <h2 class="text-xl font-semibold">
+                            <%= item.product.name %>
+                        </h2>
+
+                        <p>
+                            Quantity :
+                            <%= item.quantity %>
+                        </p>
+
+                        <p>
+                            ₹
+                            <%= item.product.price-item.product.discount %>
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <h2 class="font-bold text-xl">
+
+                    ₹
+                    <%= (item.product.price-item.product.discount)*item.quantity %>
+
+                </h2>
+
+            </div>
+
+            <% }) %>
+
+                <div class="border rounded-lg p-6 mt-10">
+
+                    <h2 class="text-2xl font-semibold mb-3">
+                        Order Summary
+                    </h2>
+
+                    <div class="flex justify-between">
+
+                        <span>Total Amount</span>
+
+                        <span class="font-bold">
+                            ₹ <%= totalPrice %>
+                        </span>
+
+                    </div>
+                    <div class="mt-5 space-y-3">
+                        <button id="pay-button"
+                            class="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl font-bold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer">
+                            <i class="ri-secure-payment-line text-xl"></i> Securely Pay with Razorpay
+                        </button>
+
+                        <button id="mock-pay-button"
+                            class="w-full bg-slate-900 border border-slate-800 hover:bg-slate-950 text-slate-300 py-3 rounded-xl font-semibold transition-all shadow-sm text-sm flex items-center justify-center gap-1.5 cursor-pointer">
+                            🔍 Offline Sandbox: Place Order Directly (Mock Success)
+                        </button>
+                    </div>
+
+                </div>
+
+
+    </div>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const payBtn = document.getElementById('pay-button');
+            const mockPayBtn = document.getElementById('mock-pay-button');
+
+            async function startPayment(isMockMode) {
+                let initialText = payBtn.innerHTML;
+                try {
+                    payBtn.innerText = "Initiating Secure Session...";
+                    payBtn.disabled = true;
+                    if (mockPayBtn) mockPayBtn.disabled = true;
+
+                    const response = await fetch('/payment/create-order', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    const data = await response.json();
+
+                    if (data.error) {
+                        alert("Checkout error: " + data.error);
+                        payBtn.innerHTML = initialText;
+                        payBtn.disabled = false;
+                        if (mockPayBtn) mockPayBtn.disabled = false;
+                        return;
+                    }
+
+                    if (isMockMode || data.isMock) {
+                        // Instantly call verify endpoint with simulated details
+                        payBtn.innerText = "Simulating transaction response...";
+                        const verifyResponse = await fetch('/payment/verify', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                razorpay_payment_id: "pay_mock_" + Math.random().toString(36).substring(7),
+                                razorpay_order_id: data.id,
+                                razorpay_signature: "mock_signature_valid",
+                                isMock: true
+                            })
+                        });
+
+                        const verifyData = await verifyResponse.json();
+                        if (verifyData.success) {
+                            window.location.href = verifyData.redirectUrl;
+                        } else {
+                            alert("Mock payment verification failed");
+                            payBtn.innerHTML = initialText;
+                            payBtn.disabled = false;
+                            if (mockPayBtn) mockPayBtn.disabled = false;
+                        }
+                        return;
+                    }
+
+                    // Normal Razorpay Integration
+                    const options = {
+                        "key": data.key,
+                        "amount": data.amount,
+                        "currency": data.currency,
+                        "name": "ShopNest",
+                        "description": "Purchase Transaction",
+                        "order_id": data.id,
+                        "handler": async function (rzpResponse) {
+                            payBtn.innerText = "Verifying transaction signature...";
+                            const verifyResponse = await fetch('/payment/verify', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    razorpay_payment_id: rzpResponse.razorpay_payment_id,
+                                    razorpay_order_id: rzpResponse.razorpay_order_id,
+                                    razorpay_signature: rzpResponse.razorpay_signature
+                                })
+                            });
+
+                            const verifyData = await verifyResponse.json();
+                            if (verifyData.success) {
+                                window.location.href = verifyData.redirectUrl;
+                            } else {
+                                window.location.href = "/payment/failed";
+                            }
+                        },
+                        "modal": {
+                            "ondismiss": function () {
+                                payBtn.innerHTML = initialText;
+                                payBtn.disabled = false;
+                                if (mockPayBtn) mockPayBtn.disabled = false;
+                            }
+                        },
+                        "prefill": {
+                            "name": "<%= user.fullname %>",
+                            "email": "<%= user.email %>"
+                        },
+                        "theme": {
+                            "color": "#2563eb"
+                        }
+                    };
+
+                    const rzp = new Razorpay(options);
+                    rzp.on('payment.failed', async function (resp) {
+                        payBtn.innerText = "Processing Failed Payment...";
+                        try {
+                            const failResponse = await fetch('/payment/save-failed', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    error: resp.error,
+                                    razorpay_order_id: resp.error.metadata.order_id
+                                })
+                            });
+                            const failData = await failResponse.json();
+                            if (failData.success) {
+                                window.location.href = failData.redirectUrl;
+                            } else {
+                                window.location.href = "/payment/failed";
+                            }
+                        } catch (e) {
+                            window.location.href = "/payment/failed";
+                        }
+                    });
+                    rzp.open();
+
+                } catch (err) {
+                    console.error(err);
+                    alert("Payment initiation failed. Please check network/server logs.");
+                    payBtn.innerHTML = initialText;
+                    payBtn.disabled = false;
+                    if (mockPayBtn) mockPayBtn.disabled = false;
+                }
+            }
+
+            if (payBtn) {
+                payBtn.addEventListener('click', () => startPayment(false));
+            }
+            if (mockPayBtn) {
+                mockPayBtn.addEventListener('click', () => startPayment(true));
+            }
+        });
+    </script>
+
+    <%- include('./partials/footer') %>

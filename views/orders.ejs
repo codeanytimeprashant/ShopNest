@@ -1,0 +1,256 @@
+<%- include('./partials/header') %>
+
+    <div class="min-h-screen bg-gray-50/50 pt-24 pb-20">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <div class="mb-10 flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight mb-2">My Orders</h1>
+                    <p class="text-gray-500">View and track your previous purchases</p>
+                </div>
+            </div>
+
+            <% if(orders.length===0) { %>
+                <!-- Empty Orders State -->
+                <div
+                    class="bg-white rounded-3xl shadow-sm border border-gray-100 p-16 flex flex-col items-center justify-center text-center transition-all duration-300">
+                    <div class="w-32 h-32 bg-blue-50 rounded-full flex items-center justify-center mb-6 shadow-inner">
+                        <span class="text-6xl text-blue-500">📦</span>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-3">No orders placed yet</h2>
+                    <p class="text-gray-500 mb-8 max-w-md">You haven't made any purchases yet. Your future orders will
+                        appear here for you to track and manage.</p>
+                    <a href="/shop"
+                        class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300">
+                        Start Shopping
+                    </a>
+                </div>
+                <% } else { %>
+
+                    <div class="space-y-6">
+                        <% orders.reverse().forEach(function(order) { %>
+                            <div
+                                class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow duration-300">
+
+                                <!-- Order Header -->
+                                <div
+                                    class="bg-gray-50/50 border-b border-gray-100 px-6 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                                    <div class="flex flex-wrap gap-x-8 gap-y-2 text-sm">
+                                        <div>
+                                            <span
+                                                class="block text-gray-500 uppercase tracking-wider text-xs font-bold mb-1">Order
+                                                Placed</span>
+                                            <span class="font-semibold text-gray-900">
+                                                <%= new Date(order.createdAt || Date.now()).toDateString() %>
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <span
+                                                class="block text-gray-500 uppercase tracking-wider text-xs font-bold mb-1">Total
+                                                Amount</span>
+                                            <span class="font-semibold text-gray-900">₹ <%=
+                                                    order.totalPrice.toLocaleString() %></span>
+                                        </div>
+                                        <div class="sm:border-l sm:border-gray-200 sm:pl-8">
+                                            <span
+                                                class="block text-gray-500 uppercase tracking-wider text-xs font-bold mb-1">Order
+                                                #</span>
+                                            <span class="font-mono text-gray-700 uppercase">
+                                                <%= order._id.toString().substring(0, 8) %>...
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <a href="/orders/<%= order._id %>"
+                                        class="shrink-0 bg-white border border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-gray-800 font-semibold py-2 px-5 rounded-lg shadow-sm transition-all text-sm">
+                                        View Details
+                                    </a>
+                                </div>
+
+                                <!-- Order Body -->
+                                <div
+                                    class="px-6 py-6 flex flex-col md:flex-row gap-6 items-start md:items-center justify-between">
+
+                                    <div class="flex-1">
+                                        <!-- Status Badges -->
+                                        <div class="flex flex-wrap gap-2 mb-5">
+
+                                            <% let oStatusClass="bg-yellow-100 text-yellow-700 border-yellow-200" ;
+                                                if(order.orderStatus==='Pending' )
+                                                oStatusClass="bg-yellow-100 text-yellow-700 border-yellow-200" ;
+                                                if(order.orderStatus==='Shipped' )
+                                                oStatusClass="bg-blue-100 text-blue-700 border-blue-200" ;
+                                                if(order.orderStatus==='Packed' )
+                                                oStatusClass="bg-indigo-100 text-indigo-700 border-indigo-200" ;
+                                                if(order.orderStatus==='Delivered' )
+                                                oStatusClass="bg-green-100 text-green-700 border-green-200" ;
+                                                if(order.orderStatus==='Cancelled' )
+                                                oStatusClass="bg-red-100 text-red-700 border-red-200" ; let
+                                                pStatusClass="bg-gray-100 text-gray-700 border-gray-200" ;
+                                                if(order.paymentStatus==='Paid' )
+                                                pStatusClass="bg-green-100 text-green-700 border-green-200" ; %>
+
+                                                <span
+                                                    class="px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-lg border <%= oStatusClass %> flex items-center gap-1.5 shadow-sm">
+                                                    <i class="ri-checkbox-blank-circle-fill text-[8px]"></i> Order: <%=
+                                                        order.orderStatus %>
+                                                </span>
+                                                <span
+                                                    class="px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-lg border <%= pStatusClass %> flex items-center gap-1.5 shadow-sm">
+                                                    <i class="ri-secure-payment-line text-[14px]"></i> Payment: <%=
+                                                        order.paymentStatus %>
+                                                </span>
+                                        </div>
+
+                                        <!-- Delivery Insight -->
+                                        <h3 class="text-lg font-bold text-gray-900 mb-1">
+                                            <% if(order.orderStatus==='Delivered' ) { %>
+                                                Delivered successfully
+                                                <% } else if(order.orderStatus==='Cancelled' ) { %>
+                                                    Order was cancelled
+                                                    <% } else { %>
+                                                        Estimated Delivery: <span class="text-blue-600 font-bold">Within
+                                                            4-5 Days</span>
+                                                        <% } %>
+                                        </h3>
+                                        <p class="text-sm text-gray-500 font-medium">Your order contains <%=
+                                                order.products.length %> product(s)</p>
+
+                                        <% if (order.paymentStatus==='Failed' ) { %>
+                                            <div class="mt-4">
+                                                <button onclick="retryPayment('<%= order._id %>')"
+                                                    class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-sm text-sm transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+                                                    Retry Payment
+                                                </button>
+                                            </div>
+                                            <% } %>
+                                    </div>
+
+                                    <!-- Thumbnails -->
+                                    <div
+                                        class="flex items-center gap-3 w-full md:w-auto overflow-x-auto pb-2 md:pb-0 hide-scrollbar shrink-0">
+                                        <% order.products.slice(0, 4).forEach(function(item) { %>
+                                            <div
+                                                class="relative w-20 h-20 bg-gray-100 rounded-xl overflow-hidden border border-gray-200 shadow-sm shrink-0 flex items-center justify-center p-2">
+                                                <% if(item.image) { %>
+                                                    <img src="data:image/jpeg;base64,<%= item.image.toString('base64') %>"
+                                                        class="max-w-full max-h-full object-contain"
+                                                        alt="<%= item.name %>">
+                                                    <% } else { %>
+                                                        <i class="ri-image-2-line text-gray-300 text-2xl"></i>
+                                                        <% } %>
+                                                            <div
+                                                                class="absolute bottom-1 right-1 bg-gray-900 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md shadow-sm select-none">
+                                                                x<%= item.quantity %>
+                                                            </div>
+                                            </div>
+                                            <% }) %>
+
+                                                <% if(order.products.length> 4) { %>
+                                                    <div
+                                                        class="w-12 h-20 flex flex-col items-center justify-center bg-gray-50 border border-gray-200 rounded-xl shrink-0">
+                                                        <span class="text-xs font-bold text-gray-500">+<%=
+                                                                order.products.length - 4 %></span>
+                                                    </div>
+                                                    <% } %>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <% }) %>
+                    </div>
+
+                    <% } %>
+        </div>
+    </div>
+
+    <style>
+        /* Utility to hide scrollbar for thumbnails on mobile */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        async function retryPayment(orderId) {
+            try {
+                const response = await fetch(`/payment/retry/${orderId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const data = await response.json();
+
+                if (data.error) {
+                    alert("Retry error: " + data.error);
+                    return;
+                }
+
+                if (data.isMock) {
+                    const verifyResponse = await fetch('/payment/verify-retry', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            razorpay_payment_id: "pay_mock_" + Math.random().toString(36).substring(7),
+                            razorpay_order_id: data.id,
+                            razorpay_signature: "mock_signature_valid",
+                            isMock: true,
+                            orderId: data.orderId
+                        })
+                    });
+
+                    const verifyData = await verifyResponse.json();
+                    if (verifyData.success) {
+                        window.location.href = verifyData.redirectUrl;
+                    } else {
+                        alert("Mock payment verification failed");
+                    }
+                    return;
+                }
+
+                const options = {
+                    "key": data.key,
+                    "amount": data.amount,
+                    "currency": data.currency,
+                    "name": "ShopNest",
+                    "description": "Retry Purchase Transaction",
+                    "order_id": data.id,
+                    "handler": async function (rzpResponse) {
+                        const verifyResponse = await fetch('/payment/verify-retry', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                razorpay_payment_id: rzpResponse.razorpay_payment_id,
+                                razorpay_order_id: rzpResponse.razorpay_order_id,
+                                razorpay_signature: rzpResponse.razorpay_signature,
+                                orderId: data.orderId
+                            })
+                        });
+
+                        const verifyData = await verifyResponse.json();
+                        if (verifyData.success) {
+                            window.location.href = verifyData.redirectUrl;
+                        } else {
+                            window.location.href = "/payment/failed";
+                        }
+                    },
+                    "theme": { "color": "#2563eb" }
+                };
+                const rzp = new Razorpay(options);
+                rzp.on('payment.failed', function (resp) {
+                    window.location.href = "/payment/failed";
+                });
+                rzp.open();
+            } catch (err) {
+                console.error(err);
+                alert("Retry failed. Please check network/server logs.");
+            }
+        }
+    </script>
+
+    <%- include('./partials/footer') %>

@@ -1,67 +1,201 @@
 <%- include('./partials/header') %>
 
-<% user.cart.forEach(function(item){ %>
+    <div class="min-h-screen bg-gray-50/50 flex flex-col pt-20 pb-20">
+        <div class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 mt-10">
 
-<div class="w-full h-screen flex items-start px-20 py-20 gap-10">
-    <div class="w-[30%] rounded-md overflow-hidden">
-        <div class="w-full flex justify-center items-center bg-[<%= item.bgcolor %>] h-52">
-            <img class="h-[15rem]" src="data:image/jpeg;base64,<%= item.image.toString('base64') %>" alt="">
-        </div>
+            <h1 class="text-3xl font-extrabold text-gray-900 mb-8 font-sans tracking-tight">Shopping Cart</h1>
 
-        <div class="w-full flex justify-between px-5 py-4 bg-[<%= item.panelcolor %>]">
-            <h3 class="text-2xl"><%= item.name %></h3>
+            <% if (user.cart.length===0) { %>
+                <!-- Empty Cart State -->
+                <div
+                    class="bg-white rounded-3xl shadow-sm border border-gray-100 p-16 flex flex-col items-center justify-center text-center transition-all duration-300">
+                    <div class="w-32 h-32 bg-blue-50 rounded-full flex items-center justify-center mb-6 shadow-inner">
+                        <span class="text-6xl">🛒</span>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-3">Your cart is empty</h2>
+                    <p class="text-gray-500 mb-8 max-w-md">Looks like you haven't added anything to your cart yet.
+                        Explore our top categories and find something you love!</p>
+                    <a href="/shop"
+                        class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300">
+                        Continue Shopping
+                    </a>
+                </div>
+                <% } else { %>
 
-            <div class="flex items-center gap-2">
-                <i class="w-7 h-7 bg-white flex rounded-full items-center justify-center ri-add-line"></i>
+                    <% let subtotalMRP=0; let totalDiscount=0; user.cart.forEach(item=> {
+                        subtotalMRP += (item.product.price * item.quantity);
+                        totalDiscount += (item.product.discount * item.quantity);
+                        });
+                        let subtotalAfterDiscount = subtotalMRP - totalDiscount;
+                        let platformFee = 20;
+                        %>
 
-                <div class="px-2 py-1 rounded-md bg-white text-black">01</div>
+                        <div class="flex flex-col lg:flex-row gap-8 items-start">
 
-                <i class="w-7 h-7 bg-white flex rounded-full items-center justify-center ri-subtract-line"></i>
-            </div>
-        </div>
+                            <!-- Left Side: Cart Items -->
+                            <div class="w-full lg:w-2/3 flex flex-col gap-6">
 
-        <div class="flex text-white items-center justify-between px-5 py-3 bg-[<%= item.textcolor %>]">
-            <h4 class="text-lg">Net Total</h4>
-            <h2 class="text-lg">₹ <%= bill %></h2>
+                                <% user.cart.forEach(function(item){ %>
+                                    <div
+                                        class="group relative bg-white rounded-2xl shadow-sm hover:shadow-md border border-gray-100 overflow-hidden flex flex-col sm:flex-row transition-all duration-300">
+
+                                        <!-- Product Image -->
+                                        <div class="w-full sm:w-48 shrink-0 flex items-center justify-center overflow-hidden p-6 relative"
+                                            style="background-color: <%= item.product.bgcolor || '#f3f4f6' %>;">
+                                            <img class="w-full h-32 object-contain group-hover:scale-105 transition-transform duration-500 drop-shadow-lg"
+                                                src="data:image/jpeg;base64,<%= item.product.image.toString('base64') %>"
+                                                alt="<%= item.product.name %>">
+                                        </div>
+
+                                        <!-- Product Details -->
+                                        <div class="flex-1 p-6 flex flex-col justify-between"
+                                            style="background-color: <%= item.product.panelcolor || '#ffffff' %>;">
+
+                                            <div class="flex justify-between items-start gap-4 mb-2">
+                                                <div>
+                                                    <h3 class="text-xl font-bold text-gray-900 leading-tight mb-1"
+                                                        style="color: <%= item.product.textcolor || '#111827' %>">
+                                                        <%= item.product.name %>
+                                                    </h3>
+
+                                                    <div
+                                                        class="flex items-center gap-3 text-sm text-gray-500 mt-2 font-medium">
+                                                        <% if(item.product.brand) { %>
+                                                            <span class="px-2 py-1 bg-gray-100 rounded-md">Brand: <%=
+                                                                    item.product.brand %></span>
+                                                            <% } %>
+                                                                <% if(item.product.category) { %>
+                                                                    <span
+                                                                        class="uppercase tracking-wider text-xs font-bold text-gray-400">
+                                                                        <%= item.product.category %>
+                                                                    </span>
+                                                                    <% } %>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Remove Button -->
+                                                <a href="/cart/decrease/<%= item.product._id %>" title="Remove Item"
+                                                    class="text-gray-400 hover:text-red-500 transition-colors p-2 bg-gray-50 hover:bg-red-50 rounded-full">
+                                                    <i class="ri-delete-bin-line text-lg"></i>
+                                                </a>
+                                            </div>
+
+                                            <div class="flex items-center gap-2 mb-4">
+                                                <% if(item.product.stock> 0) { %>
+                                                    <span
+                                                        class="flex items-center gap-1 text-green-600 text-xs font-bold uppercase tracking-wider"><i
+                                                            class="ri-checkbox-circle-fill"></i> In Stock</span>
+                                                    <% } %>
+                                            </div>
+
+                                            <div
+                                                class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mt-auto">
+
+                                                <div
+                                                    class="flex items-center gap-3 bg-gray-50 border border-gray-200 p-1 rounded-xl w-fit shadow-sm">
+                                                    <a href="/cart/decrease/<%= item.product._id %>"
+                                                        class="w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center text-gray-600 hover:bg-gray-100 transition-colors hover:text-red-500">
+                                                        <i class="ri-subtract-line font-bold"></i>
+                                                    </a>
+                                                    <span class="w-6 text-center font-bold text-gray-800 select-none">
+                                                        <%= item.quantity %>
+                                                    </span>
+                                                    <a href="/cart/increase/<%= item.product._id %>"
+                                                        class="w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center text-gray-600 hover:bg-gray-100 transition-colors hover:text-blue-500">
+                                                        <i class="ri-add-line font-bold"></i>
+                                                    </a>
+                                                </div>
+
+                                                <div class="text-right">
+                                                    <span class="block text-sm text-gray-500 mb-1">Subtotal</span>
+                                                    <div class="flex items-baseline gap-2 justify-end">
+                                                        <span class="text-2xl font-bold text-gray-900">₹<%=
+                                                                ((item.product.price - item.product.discount) *
+                                                                item.quantity).toLocaleString() %></span>
+                                                        <% if(item.product.discount> 0) { %>
+                                                            <span
+                                                                class="text-sm font-medium text-gray-400 line-through">₹
+                                                                <%= (item.product.price *
+                                                                    item.quantity).toLocaleString() %>
+                                                            </span>
+                                                            <% } %>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <% }) %>
+
+                            </div>
+
+                            <!-- Right Side: Order Summary Sticky Component -->
+                            <div
+                                class="w-full lg:w-1/3 sticky top-28 bg-white/70 backdrop-blur-xl border border-gray-100 rounded-3xl p-8 shadow-xl shadow-gray-200/50">
+
+                                <h2 class="text-xl font-bold text-gray-900 mb-6 font-sans">Order Summary</h2>
+
+                                <!-- Summary List -->
+                                <div class="flex flex-col gap-4 mb-6">
+                                    <div class="flex justify-between items-center text-gray-600 font-medium">
+                                        <span>Subtotal (<%= user.cart.length %> items)</span>
+                                        <span class="text-gray-900">₹ <%= subtotalMRP.toLocaleString() %></span>
+                                    </div>
+
+                                    <div class="flex justify-between items-center text-green-600 font-medium">
+                                        <span>Discount</span>
+                                        <span>- ₹ <%= totalDiscount.toLocaleString() %></span>
+                                    </div>
+
+                                    <div class="flex justify-between items-center text-gray-600 font-medium">
+                                        <span>Platform Fee</span>
+                                        <span class="text-gray-900">₹ <%= platformFee %></span>
+                                    </div>
+
+                                    <div
+                                        class="flex justify-between items-center text-gray-600 font-medium pb-4 border-b border-gray-100">
+                                        <span>Shipping & Handling</span>
+                                        <span
+                                            class="text-green-600 font-bold uppercase tracking-wider text-sm">Free</span>
+                                    </div>
+
+                                    <div class="flex justify-between items-end mt-2">
+                                        <span class="text-lg font-bold text-gray-900">Total Amount</span>
+                                        <div class="text-right">
+                                            <span class="block text-3xl font-extrabold text-gray-900">₹ <%=
+                                                    bill.toLocaleString() %></span>
+                                            <span
+                                                class="text-xs text-gray-500 font-medium uppercase tracking-wider block mt-1">Includes
+                                                all taxes</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Mock Coupon UI -->
+                                <div class="mb-8">
+                                    <label
+                                        class="block mb-2 text-xs font-bold text-gray-600 uppercase tracking-wide">Have
+                                        a coupon code?</label>
+                                    <div class="flex gap-2">
+                                        <input type="text" placeholder="ENTER CODE"
+                                            class="w-full border border-gray-200 bg-gray-50 py-3 px-4 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none uppercase font-semibold text-gray-700 text-sm transition-colors decoration-transparent placeholder-gray-400">
+                                        <button
+                                            class="bg-gray-900 hover:bg-black text-white px-5 rounded-xl font-semibold text-sm transition-colors shadow-md">Apply</button>
+                                    </div>
+                                </div>
+
+                                <a href="/orders/checkout"
+                                    class="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg py-4 px-6 rounded-xl shadow-lg shadow-blue-600/30 hover:-translate-y-0.5 transition-all space-x-2">
+                                    <span>Proceed to Checkout</span>
+                                    <i class="ri-arrow-right-line"></i>
+                                </a>
+
+                            </div>
+
+                        </div>
+                        <% } %>
+
         </div>
     </div>
 
-    <div class="w-[70%]">
-        <h3 class="text-xl">Price Breakdown</h3>
-
-        <div class="px-10 mt-5">
-            <div class="flex mt-2">
-                <h4 class="w-1/3">Total MRP</h4>
-                <h4>₹<%= item.price %></h4>
-            </div>
-
-            <div class="flex mt-2">
-                <h4 class="w-1/3">Discount on MRP</h4>
-                <h4>₹<%= Number(item.discount) %></h4>
-            </div>
-
-            <div class="flex mt-2">
-                <h4 class="w-1/3">Platform Fee</h4>
-                <h4>₹ 20</h4>
-            </div>
-
-            <div class="flex mt-2">
-                <h4 class="w-1/3">Shipping Fee</h4>
-                <h4>FREE</h4>
-            </div>
-        </div>
-
-        <div class="w-full h-[1px] bg-black mt-10"></div>
-
-        <div class="flex mt-5">
-            <h3 class="w-1/3 text-xl">Total Amount</h3>
-            <h3 class="font-semibold text-xl text-green-600">₹ <%= bill %></h3>
-        </div>
-
-        <form action=""></form>
-    </div>
-</div>
-
-<% }) %>
-
-<%- include('./partials/footer') %>
+    <%- include('./partials/footer') %>

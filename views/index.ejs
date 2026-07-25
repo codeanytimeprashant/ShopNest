@@ -1,46 +1,214 @@
 <%- include('partials/header') %>
 
-    <% if(error.length>0){ %>
-        <div class="absolute top-5 left-1/2 -translate-x-1/2 -translate-y-1/2 p-3 rounded-md bg-red-500">
-            <span class="inline-block mt-1 mb-1 text-white">
-                <%= error %>
-            </span>
-        </div>
-        <% } %>
-            <div class="w-full h-screen flex px-20">
-                <div class="w-1/2 flex items-center justify-center h-screen">
-                    <div class="w-full px-32">
-                        <h3 class="text-4xl">welcome to <span class="text-blue-400 font-semibold">ShopNest</span></h3>
-                        <h4 class="text-2xl mb-5">Create your account</h4>
-                        <form autocomplete="off" action="/users/register" method="post">
-                            <input
-                                class="bg-zinc-100 block w-full px-3 py-2 border-[1px] rounded-md mb-3 border-zinc-200"
-                                type="text" placeholder="Full Name" name="fullname">
-                            <input
-                                class="bg-zinc-100 block w-full px-3 py-2 border-[1px] rounded-md mb-3 border-zinc-200"
-                                type="email" placeholder="Email" name="email">
-                            <input
-                                class="bg-zinc-100 block w-full px-3 py-2 border-[1px] rounded-md mb-3 border-zinc-200"
-                                type="password" placeholder="Password" name="password">
-                            <input class="px-5 rounded-full py-3 mt-2 bg-blue-500 text-white" type="submit"
-                                value="Create My Account">
-                        </form>
-                    </div>
-                </div>
-                <div class="w-1/2 flex items-center justify-center h-screen">
-                    <div class="w-full px-32">
-                        <h4 class="text-2xl capitalize mb-5">Login your account</h4>
-                        <form autocomplete="off" action="/users/login" method="post">
-                            <input
-                                class="block bg-zinc-100 w-full px-3 py-2 border-[1px] rounded-md mb-3 border-zinc-200"
-                                type="email" placeholder="Email" name="email">
-                            <input
-                                class="block bg-zinc-100 w-full px-3 py-2 border-[1px] rounded-md mb-3 border-zinc-200"
-                                type="password" placeholder="Password" name="password">
-                            <input class="px-5 block rounded-full py-3 mt-2 bg-blue-500 text-white" type="submit"
-                                value="Login">
-                        </form>
-                    </div>
-                </div>
+<div class="min-h-screen bg-gradient-to-br from-blue-900 via-blue-700 to-blue-500 flex items-center justify-center px-8">
+
+    <!-- Main Container -->
+    <div class="w-full max-w-7xl bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl flex overflow-hidden">
+
+        <!-- LEFT SIDE -->
+        <div class="w-1/2 text-white p-16 flex flex-col justify-between">
+
+            <div>
+
+                <h1 class="text-5xl font-bold">
+                    🛍 ShopNest
+                </h1>
+
+                <h2 class="text-4xl font-semibold mt-8 leading-tight">
+                    Shop Smarter.<br>
+                    Live Better.
+                </h2>
+
+                <p class="mt-6 text-lg text-blue-100 leading-8">
+
+                    Discover premium products with secure checkout,
+                    lightning-fast delivery and unbeatable prices.
+
+                </p>
+
             </div>
-            <%- include('partials/footer') %>
+
+            <!-- Features -->
+
+            <div class="space-y-5 mt-12">
+
+                <div class="flex items-center gap-3">
+
+                    ✅ Secure Payments
+
+                </div>
+
+                <div class="flex items-center gap-3">
+
+                    🚚 Fast Delivery
+
+                </div>
+
+                <div class="flex items-center gap-3">
+
+                    ⭐ Premium Products
+
+                </div>
+
+                <div class="flex items-center gap-3">
+
+                    ↩ Easy Returns
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- RIGHT SIDE -->
+
+<div class="w-1/2 bg-white rounded-l-3xl p-14 flex flex-col justify-center">
+
+    <% if(error.length > 0){ %>
+        <div class="mb-6 p-4 rounded-xl bg-red-100 border border-red-300 text-red-700">
+            <%= error %>
+        </div>
+    <% } %>
+
+    <!-- Tabs -->
+
+    <div class="flex rounded-xl overflow-hidden border border-gray-300 mb-8">
+
+        <button id="loginTab"
+            class="w-1/2 py-3 bg-blue-600 text-white font-semibold transition">
+            Login
+        </button>
+
+        <button id="registerTab"
+            class="w-1/2 py-3 bg-gray-100 text-gray-700 font-semibold transition">
+            Register
+        </button>
+
+    </div>
+
+    <!-- LOGIN FORM -->
+
+    <div id="loginForm">
+
+        <h2 class="text-4xl font-bold text-center">
+            Welcome Back 👋
+        </h2>
+
+        <p class="text-center text-gray-500 mt-3 mb-8">
+            Login to continue shopping
+        </p>
+
+        <form action="/users/login" method="POST" class="space-y-5">
+
+            <input
+                class="w-full p-4 rounded-xl bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                type="email"
+                name="email"
+                placeholder="Email Address"
+                required>
+
+            <input
+                class="w-full p-4 rounded-xl bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                type="password"
+                name="password"
+                placeholder="Password"
+                required>
+
+            <button
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl font-semibold transition">
+
+                Login
+
+            </button>
+
+        </form>
+
+    </div>
+
+    <!-- REGISTER FORM -->
+
+    <div id="registerForm" class="hidden">
+
+        <h2 class="text-4xl font-bold text-center">
+            Create Account
+        </h2>
+
+        <p class="text-center text-gray-500 mt-3 mb-8">
+            Join ShopNest and start shopping today.
+        </p>
+
+        <form action="/users/register" method="POST" class="space-y-5">
+
+            <input
+                class="w-full p-4 rounded-xl bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                type="text"
+                name="fullname"
+                placeholder="Full Name"
+                required>
+
+            <input
+                class="w-full p-4 rounded-xl bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                type="email"
+                name="email"
+                placeholder="Email Address"
+                required>
+
+            <input
+                class="w-full p-4 rounded-xl bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                type="password"
+                name="password"
+                placeholder="Password"
+                required>
+
+            <button
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl font-semibold transition">
+
+                Create Account
+
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+    </div>
+
+</div>
+
+<script>
+const loginTab = document.getElementById("loginTab");
+const registerTab = document.getElementById("registerTab");
+
+const loginForm = document.getElementById("loginForm");
+const registerForm = document.getElementById("registerForm");
+
+loginTab.addEventListener("click", () => {
+
+    loginForm.classList.remove("hidden");
+    registerForm.classList.add("hidden");
+
+    loginTab.classList.add("bg-blue-600","text-white");
+    loginTab.classList.remove("bg-gray-100","text-gray-700");
+
+    registerTab.classList.remove("bg-blue-600","text-white");
+    registerTab.classList.add("bg-gray-100","text-gray-700");
+
+});
+
+registerTab.addEventListener("click", () => {
+
+    registerForm.classList.remove("hidden");
+    loginForm.classList.add("hidden");
+
+    registerTab.classList.add("bg-blue-600","text-white");
+    registerTab.classList.remove("bg-gray-100","text-gray-700");
+
+    loginTab.classList.remove("bg-blue-600","text-white");
+    loginTab.classList.add("bg-gray-100","text-gray-700");
+
+});
+</script>
+
+<%- include('partials/footer') %>

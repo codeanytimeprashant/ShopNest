@@ -1,0 +1,273 @@
+<%- include('./partials/header') %>
+
+    <div class="min-h-screen bg-gray-50/50 flex flex-col pt-20 pb-20">
+        <div class="max-w-4xl mx-auto w-full px-4 sm:px-6 lg:px-8 mt-10">
+
+            <!-- Page Header -->
+            <div class="flex items-center gap-5 mb-8">
+                <!-- Avatar -->
+                <div
+                    class="w-20 h-20 rounded-full overflow-hidden shrink-0 bg-blue-100 flex items-center justify-center shadow-md ring-4 ring-white">
+                    <% if (user.picture) { %>
+                        <img src="<%= user.picture %>" alt="Profile" class="w-full h-full object-cover">
+                        <% } else { %>
+                            <span class="text-3xl font-extrabold text-blue-500">
+                                <%= user.fullname ? user.fullname.charAt(0).toUpperCase() : 'U' %>
+                            </span>
+                            <% } %>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-extrabold text-gray-900">
+                        <%= user.fullname || 'User' %>
+                    </h1>
+                    <p class="text-gray-500 text-sm font-medium mt-0.5">
+                        <%= user.email %>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="flex gap-1 border-b border-gray-200 mb-8" id="tab-bar">
+                <button onclick="switchTab('info')" id="tab-info"
+                    class="tab-btn px-5 py-2.5 text-sm font-bold rounded-t-lg border-b-2 border-blue-600 text-blue-600 transition-all">
+                    <i class="ri-user-line mr-1"></i> Profile Info
+                </button>
+                <button onclick="switchTab('password')" id="tab-password"
+                    class="tab-btn px-5 py-2.5 text-sm font-bold rounded-t-lg border-b-2 border-transparent text-gray-500 hover:text-gray-800 transition-all">
+                    <i class="ri-lock-line mr-1"></i> Change Password
+                </button>
+                <button onclick="switchTab('addresses')" id="tab-addresses"
+                    class="tab-btn px-5 py-2.5 text-sm font-bold rounded-t-lg border-b-2 border-transparent text-gray-500 hover:text-gray-800 transition-all">
+                    <i class="ri-map-pin-line mr-1"></i> Saved Addresses
+                </button>
+            </div>
+
+            <!-- ── TAB 1: Profile Info ── -->
+            <div id="panel-info" class="tab-panel">
+                <form action="/users/profile/update" method="POST" enctype="multipart/form-data"
+                    class="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 flex flex-col gap-6">
+                    <h2 class="text-lg font-bold text-gray-900">Personal Information</h2>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div class="sm:col-span-2">
+                            <label class="block mb-1.5 text-sm font-bold text-gray-600">Profile Picture</label>
+                            <input name="picture" type="file" accept="image/*"
+                                class="w-full border border-gray-200 bg-gray-50 py-2.5 px-4 rounded-xl text-sm text-gray-700 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:bg-blue-600 file:text-white file:text-xs file:font-semibold cursor-pointer">
+                            <p class="text-xs text-gray-400 mt-1">Leave blank to keep current photo</p>
+                        </div>
+
+                        <div>
+                            <label class="block mb-1.5 text-sm font-bold text-gray-600">Full Name</label>
+                            <input name="fullname" type="text" value="<%= user.fullname || '' %>" required
+                                class="w-full border border-gray-200 bg-gray-50 py-2.5 px-4 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-colors">
+                        </div>
+
+                        <div>
+                            <label class="block mb-1.5 text-sm font-bold text-gray-600">Contact Number</label>
+                            <input name="contact" type="tel" value="<%= user.contact || '' %>"
+                                class="w-full border border-gray-200 bg-gray-50 py-2.5 px-4 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-colors">
+                        </div>
+
+                        <div class="sm:col-span-2">
+                            <label class="block mb-1.5 text-sm font-bold text-gray-600">Email Address</label>
+                            <input type="text" value="<%= user.email %>" disabled
+                                class="w-full border border-gray-100 bg-gray-100 py-2.5 px-4 rounded-xl text-sm text-gray-400 cursor-not-allowed">
+                            <p class="text-xs text-gray-400 mt-1">Email cannot be changed</p>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-gray-100">
+                        <button type="submit"
+                            class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl shadow-md text-sm transition-colors">
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- ── TAB 2: Change Password ── -->
+            <div id="panel-password" class="tab-panel hidden">
+                <form action="/users/profile/change-password" method="POST"
+                    class="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 flex flex-col gap-6">
+                    <h2 class="text-lg font-bold text-gray-900">Change Password</h2>
+
+                    <div class="flex flex-col gap-5 max-w-md">
+                        <div>
+                            <label class="block mb-1.5 text-sm font-bold text-gray-600">Current Password</label>
+                            <input name="currentPassword" type="password" required
+                                class="w-full border border-gray-200 bg-gray-50 py-2.5 px-4 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-colors">
+                        </div>
+                        <div>
+                            <label class="block mb-1.5 text-sm font-bold text-gray-600">New Password</label>
+                            <input name="newPassword" type="password" required minlength="6"
+                                class="w-full border border-gray-200 bg-gray-50 py-2.5 px-4 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-colors">
+                        </div>
+                        <div>
+                            <label class="block mb-1.5 text-sm font-bold text-gray-600">Confirm New Password</label>
+                            <input name="confirmPassword" type="password" required minlength="6"
+                                class="w-full border border-gray-200 bg-gray-50 py-2.5 px-4 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-colors">
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-gray-100">
+                        <button type="submit"
+                            class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl shadow-md text-sm transition-colors">
+                            Update Password
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- ── TAB 3: Addresses ── -->
+            <div id="panel-addresses" class="tab-panel hidden">
+                <div class="flex flex-col gap-6">
+
+                    <!-- Existing Addresses -->
+                    <% if (user.addresses && user.addresses.length> 0) { %>
+                        <div class="flex flex-col gap-4">
+                            <% user.addresses.forEach(addr=> { %>
+                                <div
+                                    class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col sm:flex-row justify-between gap-4 <%= addr.isDefault ? 'ring-2 ring-blue-500' : '' %>">
+                                    <div class="flex gap-4">
+                                        <div
+                                            class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center shrink-0 mt-0.5">
+                                            <i class="ri-map-pin-2-fill text-blue-500"></i>
+                                        </div>
+                                        <div>
+                                            <div class="flex items-center gap-2 mb-1">
+                                                <p class="font-bold text-gray-900 text-sm">
+                                                    <%= addr.fullname %>
+                                                </p>
+                                                <% if (addr.isDefault) { %>
+                                                    <span
+                                                        class="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-bold rounded-full">Default</span>
+                                                    <% } %>
+                                            </div>
+                                            <p class="text-sm text-gray-600">
+                                                <%= addr.street %>, <%= addr.city %>, <%= addr.state %> – <%=
+                                                                addr.pincode %>
+                                            </p>
+                                            <p class="text-sm text-gray-500">
+                                                <%= addr.country %> &nbsp;|&nbsp; 📞 <%= addr.phone %>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2 shrink-0">
+                                        <% if (!addr.isDefault) { %>
+                                            <form action="/users/profile/address/<%= addr._id %>/set-default"
+                                                method="POST">
+                                                <button type="submit"
+                                                    class="text-xs font-semibold text-blue-600 hover:text-blue-800 px-3 py-1.5 rounded-lg border border-blue-200 hover:bg-blue-50 transition-colors">
+                                                    Set Default
+                                                </button>
+                                            </form>
+                                            <% } %>
+                                                <form action="/users/profile/address/<%= addr._id %>/delete"
+                                                    method="POST" onsubmit="return confirm('Remove this address?')">
+                                                    <button type="submit"
+                                                        class="text-xs font-semibold text-red-500 hover:text-red-700 px-3 py-1.5 rounded-lg border border-red-100 hover:bg-red-50 transition-colors">
+                                                        <i class="ri-delete-bin-line"></i> Remove
+                                                    </button>
+                                                </form>
+                                    </div>
+                                </div>
+                                <% }) %>
+                        </div>
+                        <% } else { %>
+                            <div class="bg-white rounded-2xl border border-gray-100 p-10 text-center text-gray-400">
+                                <i class="ri-map-pin-line text-4xl mb-2 block"></i>
+                                <p class="font-medium">No saved addresses yet. Add one below!</p>
+                            </div>
+                            <% } %>
+
+                                <!-- Add New Address Form -->
+                                <form action="/users/profile/address/add" method="POST"
+                                    class="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 flex flex-col gap-5">
+                                    <h2 class="text-lg font-bold text-gray-900">Add New Address</h2>
+
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div>
+                                            <label
+                                                class="block mb-1.5 text-xs font-bold text-gray-600 uppercase tracking-wide">Full
+                                                Name</label>
+                                            <input name="fullname" type="text" placeholder="Recipient name" required
+                                                class="w-full border border-gray-200 bg-gray-50 py-2.5 px-4 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-colors">
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block mb-1.5 text-xs font-bold text-gray-600 uppercase tracking-wide">Phone</label>
+                                            <input name="phone" type="tel" placeholder="10-digit number" required
+                                                class="w-full border border-gray-200 bg-gray-50 py-2.5 px-4 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-colors">
+                                        </div>
+                                        <div class="sm:col-span-2">
+                                            <label
+                                                class="block mb-1.5 text-xs font-bold text-gray-600 uppercase tracking-wide">Street
+                                                / Flat / Landmark</label>
+                                            <input name="street" type="text" placeholder="House no., street, area"
+                                                required
+                                                class="w-full border border-gray-200 bg-gray-50 py-2.5 px-4 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-colors">
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block mb-1.5 text-xs font-bold text-gray-600 uppercase tracking-wide">City</label>
+                                            <input name="city" type="text" placeholder="City" required
+                                                class="w-full border border-gray-200 bg-gray-50 py-2.5 px-4 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-colors">
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block mb-1.5 text-xs font-bold text-gray-600 uppercase tracking-wide">State</label>
+                                            <input name="state" type="text" placeholder="State" required
+                                                class="w-full border border-gray-200 bg-gray-50 py-2.5 px-4 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-colors">
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block mb-1.5 text-xs font-bold text-gray-600 uppercase tracking-wide">Pincode</label>
+                                            <input name="pincode" type="text" placeholder="6-digit pincode" required
+                                                class="w-full border border-gray-200 bg-gray-50 py-2.5 px-4 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-colors">
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block mb-1.5 text-xs font-bold text-gray-600 uppercase tracking-wide">Country</label>
+                                            <input name="country" type="text" value="India"
+                                                class="w-full border border-gray-200 bg-gray-50 py-2.5 px-4 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-colors">
+                                        </div>
+                                        <div class="sm:col-span-2 flex items-center gap-2 mt-1">
+                                            <input type="checkbox" name="isDefault" id="isDefault"
+                                                class="w-4 h-4 rounded accent-blue-600">
+                                            <label for="isDefault"
+                                                class="text-sm font-semibold text-gray-600 cursor-pointer">Set as
+                                                default address</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="pt-4 border-t border-gray-100">
+                                        <button type="submit"
+                                            class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl shadow-md text-sm transition-colors flex items-center gap-2">
+                                            <i class="ri-add-line"></i> Save Address
+                                        </button>
+                                    </div>
+                                </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Tab switching script -->
+    <script>
+        function switchTab(name) {
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.remove('border-blue-600', 'text-blue-600');
+                b.classList.add('border-transparent', 'text-gray-500');
+            });
+            document.getElementById('panel-' + name).classList.remove('hidden');
+            const btn = document.getElementById('tab-' + name);
+            btn.classList.add('border-blue-600', 'text-blue-600');
+            btn.classList.remove('border-transparent', 'text-gray-500');
+        }
+
+    </script>
+
+    <%- include('./partials/footer') %>

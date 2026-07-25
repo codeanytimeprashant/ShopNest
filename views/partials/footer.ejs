@@ -1,3 +1,187 @@
+<footer class="bg-slate-900 text-gray-300 mt-20">
+
+    <div class="max-w-7xl mx-auto px-8 py-12">
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
+
+            <!-- Brand -->
+
+            <div>
+
+                <div class="flex items-center gap-2 mb-4">
+
+                    <i class="ri-shopping-bag-3-fill text-3xl text-blue-500"></i>
+
+                    <h2 class="text-2xl font-bold text-white">
+                        ShopNest
+                    </h2>
+
+                </div>
+
+                <p class="text-gray-400 leading-7">
+
+                    Shop smarter with premium products,
+                    secure payments, fast delivery,
+                    and an amazing shopping experience.
+
+                </p>
+
+            </div>
+
+            <!-- Quick Links -->
+
+            <div>
+
+                <h3 class="text-white font-semibold text-lg mb-4">
+                    Quick Links
+                </h3>
+
+                <div class="space-y-2">
+
+                    <a href="/" class="block hover:text-blue-400 transition">
+                        Home
+                    </a>
+
+                    <a href="/shop" class="block hover:text-blue-400 transition">
+                        Shop
+                    </a>
+
+                    <a href="/cart" class="block hover:text-blue-400 transition">
+                        Cart
+                    </a>
+
+                    <a href="/orders/my-orders" class="block hover:text-blue-400 transition">
+                        My Orders
+                    </a>
+
+                </div>
+
+            </div>
+
+            <!-- Support -->
+
+            <div>
+
+                <h3 class="text-white font-semibold text-lg mb-4">
+                    Support
+                </h3>
+
+                <div class="space-y-2">
+
+                    <a href="#" class="block hover:text-blue-400 transition">
+                        Contact Us
+                    </a>
+
+                    <a href="#" class="block hover:text-blue-400 transition">
+                        Privacy Policy
+                    </a>
+
+                    <a href="#" class="block hover:text-blue-400 transition">
+                        Terms & Conditions
+                    </a>
+
+                    <a href="#" class="block hover:text-blue-400 transition">
+                        FAQs
+                    </a>
+
+                </div>
+
+            </div>
+
+            <!-- Social -->
+
+            <div>
+
+                <h3 class="text-white font-semibold text-lg mb-4">
+                    Connect With Us
+                </h3>
+
+                <div class="flex gap-4 text-2xl">
+
+                    <a href="#" class="hover:text-blue-500 transition">
+                        <i class="ri-github-fill"></i>
+                    </a>
+
+                    <a href="#" class="hover:text-blue-500 transition">
+                        <i class="ri-linkedin-box-fill"></i>
+                    </a>
+
+                    <a href="#" class="hover:text-pink-500 transition">
+                        <i class="ri-instagram-fill"></i>
+                    </a>
+
+                    <a href="#" class="hover:text-blue-400 transition">
+                        <i class="ri-twitter-x-fill"></i>
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Bottom Footer -->
+
+        <div class="border-t border-slate-700 mt-10 pt-6 flex flex-col md:flex-row justify-between items-center">
+
+            <p class="text-gray-400">
+
+                © 2026 ShopNest. All Rights Reserved.
+
+            </p>
+
+            <p class="text-gray-400 mt-3 md:mt-0">
+
+                Built by
+                <span class="text-white font-semibold">
+                    Prashant Padwal
+                </span>
+
+            </p>
+
+        </div>
+
+    </div>
+
+</footer>
+
+<!-- Global Loading Overlay -->
+<div id="globalLoader"
+    class="fixed inset-0 bg-white/80 backdrop-blur z-[9999] opacity-0 pointer-events-none transition-opacity duration-300 flex flex-col items-center justify-center">
+    <div
+        class="w-16 h-16 border-4 border-blue-500 border-t-transparent border-dashed rounded-full animate-spin shadow-lg">
+    </div>
+    <span class="mt-4 text-blue-600 font-bold tracking-widest uppercase text-sm animate-pulse">Loading...</span>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const loader = document.getElementById('globalLoader');
+
+        document.querySelectorAll('a').forEach(anchor => {
+            anchor.addEventListener('click', (e) => {
+                if (anchor.href && !anchor.href.includes('#') && !anchor.href.includes('javascript:') && anchor.target !== '_blank' && !anchor.getAttribute('download')) {
+                    loader.classList.remove('opacity-0', 'pointer-events-none');
+                    loader.classList.add('opacity-100');
+                }
+            });
+        });
+
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', () => {
+                loader.classList.remove('opacity-0', 'pointer-events-none');
+                loader.classList.add('opacity-100');
+            });
+        });
+
+        window.addEventListener('pageshow', (e) => {
+            if (e.persisted) {
+                loader.classList.add('opacity-0', 'pointer-events-none');
+                loader.classList.remove('opacity-100');
+            }
+        });
+    });
+</script>
 </body>
 
 </html>

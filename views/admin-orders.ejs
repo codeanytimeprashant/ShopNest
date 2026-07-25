@@ -1,0 +1,136 @@
+<%- include('./partials/header') %>
+
+    <div class="min-h-screen bg-gray-50/50 flex flex-col pt-20 pb-20">
+        <div class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 mt-10">
+
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="text-3xl font-extrabold text-gray-900 font-sans tracking-tight">Manage Orders</h1>
+                <a href="/owners/admin/dashboard"
+                    class="text-gray-500 hover:text-gray-900 font-semibold text-sm transition-colors flex items-center gap-2">
+                    <i class="ri-arrow-left-line"></i> Back to Dashboard
+                </a>
+            </div>
+
+            <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden p-6">
+                <% if (orders.length===0) { %>
+                    <div class="p-10 text-center text-gray-500 font-medium">No orders have been placed yet.</div>
+                    <% } else { %>
+                        <div class="flex flex-col gap-6">
+                            <% orders.forEach(order=> { %>
+                                <div
+                                    class="border border-gray-100 rounded-2xl p-6 flex flex-col lg:flex-row justify-between gap-6 hover:shadow-md transition-shadow">
+
+                                    <!-- Order Info -->
+                                    <div class="flex-1 flex flex-col justify-between">
+                                        <div>
+                                            <h3 class="text-lg font-bold text-gray-900 mb-1">Order #<%= order._id %>
+                                            </h3>
+                                            <p class="text-sm text-gray-500 font-medium mb-4">Placed on <%=
+                                                    order.createdAt.toDateString() %> by <span class="text-gray-800">
+                                                        <%= order.user ? order.user.fullname : 'Unknown' %>
+                                                    </span> (<%= order.user ? order.user.email : 'N/A' %>)</p>
+
+                                            <div class="flex flex-wrap gap-4 mt-2">
+                                                <div
+                                                    class="bg-gray-50 px-4 py-2 rounded-xl text-sm border border-gray-100">
+                                                    <span
+                                                        class="block text-xs uppercase tracking-wider font-bold text-gray-400 mb-1">Payment
+                                                        Status</span>
+                                                    <span
+                                                        class="font-bold <%= order.paymentStatus === 'Paid' ? 'text-green-600' : 'text-orange-500' %>">
+                                                        <%= order.paymentStatus %>
+                                                    </span>
+                                                </div>
+                                                <div
+                                                    class="bg-gray-50 px-4 py-2 rounded-xl text-sm border border-gray-100">
+                                                    <span
+                                                        class="block text-xs uppercase tracking-wider font-bold text-gray-400 mb-1">Amount</span>
+                                                    <span class="font-extrabold text-gray-900">₹ <%=
+                                                            order.totalPrice.toLocaleString() %></span>
+                                                </div>
+                                                <div
+                                                    class="bg-gray-50 px-4 py-2 rounded-xl text-sm border border-gray-100 flex-1 min-w-[200px]">
+                                                    <span
+                                                        class="block text-xs uppercase tracking-wider font-bold text-gray-400 mb-1">Items
+                                                        (<%= order.products.length %>)</span>
+                                                    <div class="flex -space-x-2 overflow-hidden">
+                                                        <% order.products.slice(0, 5).forEach(item=> { %>
+                                                            <% if(item.image) { %>
+                                                                <img class="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover"
+                                                                    src="data:image/jpeg;base64,<%= item.image.toString('base64') %>"
+                                                                    alt="" title="<%= item.name %>">
+                                                                <% } %>
+                                                                    <% }) %>
+                                                                        <% if(order.products.length> 5) { %>
+                                                                            <span
+                                                                                class="inline-block h-8 w-8 rounded-full bg-gray-100 ring-2 ring-white flex items-center justify-center text-xs font-bold text-gray-600">+
+                                                                                <%= order.products.length - 5 %></span>
+                                                                            <% } %>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Update Status Action -->
+                                    <div class="w-full lg:w-1/3 bg-gray-50/50 rounded-2xl p-6 border border-gray-100">
+                                        <h4 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Update
+                                            Status</h4>
+                                        <form action="/owners/admin/orders/<%= order._id %>/status" method="POST"
+                                            class="flex flex-col gap-4">
+                                            <div>
+                                                <label class="block text-xs font-bold text-gray-600 mb-1">Order
+                                                    Status</label>
+                                                <select name="orderStatus"
+                                                    class="w-full border border-gray-200 bg-white py-2 px-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium">
+                                                    <option value="Placed" <%=order.orderStatus==='Placed' ? 'selected'
+                                                        : '' %>>Placed</option>
+                                                    <option value="Packed" <%=order.orderStatus==='Packed' ? 'selected'
+                                                        : '' %>>Packed</option>
+                                                    <option value="Shipped" <%=order.orderStatus==='Shipped'
+                                                        ? 'selected' : '' %>>Shipped</option>
+                                                    <option value="Delivered" <%=order.orderStatus==='Delivered'
+                                                        ? 'selected' : '' %>>Delivered</option>
+                                                    <option value="Cancelled" <%=order.orderStatus==='Cancelled'
+                                                        ? 'selected' : '' %>>Cancelled</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-bold text-gray-600 mb-1">Tracking
+                                                    Status</label>
+                                                <select name="trackingStatus"
+                                                    class="w-full border border-gray-200 bg-white py-2 px-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium">
+                                                    <option value="Placed" <%=order.trackingStatus==='Placed'
+                                                        ? 'selected' : '' %>>Placed</option>
+                                                    <option value="Confirmed" <%=order.trackingStatus==='Confirmed'
+                                                        ? 'selected' : '' %>>Confirmed</option>
+                                                    <option value="Packed" <%=order.trackingStatus==='Packed'
+                                                        ? 'selected' : '' %>>Packed</option>
+                                                    <option value="Shipped" <%=order.trackingStatus==='Shipped'
+                                                        ? 'selected' : '' %>>Shipped</option>
+                                                    <option value="Out For Delivery"
+                                                        <%=order.trackingStatus==='Out For Delivery' ? 'selected' : ''
+                                                        %>>Out For Delivery</option>
+                                                    <option value="Delivered" <%=order.trackingStatus==='Delivered'
+                                                        ? 'selected' : '' %>>Delivered</option>
+                                                    <option value="Cancelled" <%=order.trackingStatus==='Cancelled'
+                                                        ? 'selected' : '' %>>Cancelled</option>
+                                                </select>
+                                            </div>
+                                            <button type="submit"
+                                                class="mt-2 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-lg text-sm shadow-md transition-colors">
+                                                Update Order
+                                            </button>
+                                        </form>
+                                    </div>
+
+                                </div>
+                                <% }) %>
+                        </div>
+                        <% } %>
+            </div>
+
+        </div>
+    </div>
+
+    <%- include('./partials/footer') %>

@@ -1,0 +1,284 @@
+<%- include('./partials/header') %>
+
+    <div class="container mx-auto px-4 md:px-10 py-20 min-h-screen">
+
+        <!-- Product Card -->
+        <div
+            class="flex flex-col md:flex-row gap-12 bg-white rounded-3xl shadow-sm border border-gray-100 p-8 md:p-12 mt-10">
+
+            <!-- Image -->
+            <div class="w-full md:w-1/2 flex items-center justify-center p-8 rounded-2xl"
+                style="background-color: <%= product.bgcolor %>">
+                <img class="max-w-full h-auto object-contain transform hover:scale-105 transition-transform duration-500 drop-shadow-2xl"
+                    src="data:image/jpeg;base64,<%= product.image.toString('base64') %>" alt="<%= product.name %>">
+            </div>
+
+            <!-- Details -->
+            <div class="w-full md:w-1/2 flex flex-col justify-center">
+
+                <div class="flex gap-2 mb-4">
+                    <% if(product.category) { %>
+                        <span
+                            class="px-3 py-1 bg-gray-100 text-gray-600 text-xs font-bold uppercase tracking-wider rounded-full">
+                            <%= product.category %>
+                        </span>
+                        <% } %>
+                            <% if(product.discount> 0) { %>
+                                <span
+                                    class="px-3 py-1 bg-red-100 text-red-600 text-xs font-bold uppercase tracking-wider rounded-full">Sale
+                                    - Rs.<%= product.discount %> Off</span>
+                                <% } %>
+                </div>
+
+                <h1 class="text-4xl font-extrabold text-gray-900 mb-2" style="color: <%= product.textcolor %>">
+                    <%= product.name %>
+                </h1>
+
+                <% if(product.brand) { %>
+                    <p class="text-sm text-gray-500 mb-4 font-medium">By: <span class="text-gray-900">
+                            <%= product.brand %>
+                        </span></p>
+                    <% } %>
+
+                        <!-- Star Rating Summary -->
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="flex gap-0.5">
+                                <% var roundedRating=Math.round(product.rating || 0); %>
+                                    <% for(var si=1; si<=5; si++) { %>
+                                        <% if(si <=roundedRating) { %>
+                                            <i class="ri-star-fill text-amber-400 text-lg"></i>
+                                            <% } else { %>
+                                                <i class="ri-star-line text-gray-300 text-lg"></i>
+                                                <% } %>
+                                                    <% } %>
+                            </div>
+                            <span class="text-sm font-bold text-gray-700">
+                                <%= product.rating ? product.rating.toFixed(1) : '0.0' %>
+                            </span>
+                            <% var rCount=product.reviewCount || 0; %>
+                                <span class="text-sm text-gray-400">(<%= rCount %> review<%= rCount !==1 ? 's' : '' %>
+                                            )</span>
+                        </div>
+
+                        <!-- Pricing -->
+                        <div class="flex items-center gap-4 mb-6">
+                            <span class="text-3xl font-bold text-gray-900">Rs. <%= (product.price -
+                                    product.discount).toLocaleString() %></span>
+                            <% if(product.discount> 0) { %>
+                                <span class="text-xl text-gray-400 line-through">Rs. <%= product.price.toLocaleString()
+                                        %></span>
+                                <% } %>
+                        </div>
+
+                        <!-- Description -->
+                        <% if(product.description) { %>
+                            <div class="mb-8">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-2">Description</h3>
+                                <p class="text-gray-600 leading-relaxed text-sm">
+                                    <%= product.description %>
+                                </p>
+                            </div>
+                            <% } %>
+
+                                <!-- Stock & Actions -->
+                                <div class="space-y-6">
+                                    <div class="flex items-center gap-2">
+                                        <% if(product.stock> 0) { %>
+                                            <div class="w-2.5 h-2.5 rounded-full bg-green-500"></div>
+                                            <span class="text-sm font-medium text-gray-700">In Stock (<%= product.stock
+                                                    %> available)</span>
+                                            <% } else { %>
+                                                <div class="w-2.5 h-2.5 rounded-full bg-red-500"></div>
+                                                <span class="text-sm font-medium text-gray-700">Out of Stock</span>
+                                                <% } %>
+                                    </div>
+                                    <div class="flex gap-4">
+                                        <% if(product.stock> 0) { %>
+                                            <a href="/addtocart/<%= product._id %>"
+                                                class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-center py-4 rounded-xl font-semibold text-lg transition-colors duration-300 shadow-md flex items-center justify-center gap-2">
+                                                <i class="ri-shopping-cart-2-line"></i> Add to Cart
+                                            </a>
+                                            <% } else { %>
+                                                <button disabled
+                                                    class="flex-1 bg-gray-300 text-gray-500 text-center py-4 rounded-xl font-semibold text-lg cursor-not-allowed">Out
+                                                    of Stock</button>
+                                                <% } %>
+                                                    <a href="/shop"
+                                                        class="px-8 py-4 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-xl font-semibold text-lg transition-colors duration-300 flex items-center justify-center">
+                                                        Back
+                                                    </a>
+                                    </div>
+                                </div>
+            </div>
+        </div>
+
+        <!-- Reviews Section -->
+        <div class="mt-12 flex flex-col lg:flex-row gap-8 items-start">
+
+            <!-- Review List -->
+            <div class="w-full lg:w-2/3">
+                <h2 class="text-2xl font-extrabold text-gray-900 mb-6">
+                    Customer Reviews
+                    <% if(reviews.length> 0) { %><span class="text-base font-medium text-gray-400 ml-2">(<%=
+                                reviews.length %>)</span>
+                        <% } %>
+                </h2>
+
+                <% if(reviews.length===0) { %>
+                    <div class="bg-white rounded-2xl border border-gray-100 p-10 text-center text-gray-400">
+                        <i class="ri-chat-3-line text-4xl mb-2 block"></i>
+                        <p class="font-medium">No reviews yet. Be the first!</p>
+                    </div>
+                    <% } else { %>
+                        <div class="flex flex-col gap-4">
+                            <% reviews.forEach(function(review) { %>
+                                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                                    <div class="flex justify-between items-start gap-4">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="w-10 h-10 rounded-full overflow-hidden bg-blue-100 flex items-center justify-center shrink-0 shadow-sm">
+                                                <% if(review.user.picture) { %>
+                                                    <img src="<%= review.user.picture %>"
+                                                        class="w-full h-full object-cover" alt="">
+                                                    <% } else { %>
+                                                        <span class="font-bold text-blue-500 text-sm">
+                                                            <%= review.user.fullname ?
+                                                                review.user.fullname.charAt(0).toUpperCase() : 'U' %>
+                                                        </span>
+                                                        <% } %>
+                                            </div>
+                                            <div>
+                                                <p class="font-bold text-gray-900 text-sm">
+                                                    <%= review.user.fullname || 'User' %>
+                                                </p>
+                                                <p class="text-xs text-gray-400">
+                                                    <%= review.createdAt.toDateString() %>
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="flex gap-0.5 shrink-0">
+                                            <% for(var ri=1; ri<=5; ri++) { %>
+                                                <% if(ri <=review.rating) { %>
+                                                    <i class="ri-star-fill text-amber-400 text-sm"></i>
+                                                    <% } else { %>
+                                                        <i class="ri-star-line text-gray-300 text-sm"></i>
+                                                        <% } %>
+                                                            <% } %>
+                                        </div>
+                                    </div>
+                                    <% if(review.comment) { %>
+                                        <p class="text-gray-600 text-sm mt-3 leading-relaxed">
+                                            <%= review.comment %>
+                                        </p>
+                                        <% } %>
+                                            <% if(user && review.user._id.toString()===user._id.toString()) { %>
+                                                <form
+                                                    action="/product/<%= product._id %>/review/<%= review._id %>/delete"
+                                                    method="POST" class="mt-3">
+                                                    <button type="submit"
+                                                        class="text-xs text-red-400 hover:text-red-600 font-semibold transition-colors">
+                                                        <i class="ri-delete-bin-line"></i> Delete my review
+                                                    </button>
+                                                </form>
+                                                <% } %>
+                                </div>
+                                <% }); %>
+                        </div>
+                        <% } %>
+            </div>
+
+            <!-- Submit Review Form -->
+            <div class="w-full lg:w-1/3 sticky top-24">
+                <div class="bg-white rounded-3xl border border-gray-100 shadow-sm p-7">
+                    <h3 class="text-lg font-bold text-gray-900 mb-5">
+                        <% if(userReview) { %>Update Your Review<% } else { %>Write a Review<% } %>
+                    </h3>
+
+                    <form action="/product/<%= product._id %>/review" method="POST" class="flex flex-col gap-5">
+                        <div>
+                            <label class="block mb-2 text-sm font-bold text-gray-600">Your Rating</label>
+                            <div class="flex gap-2" id="star-group">
+                                <% for(var fi=1; fi<=5; fi++) { %>
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="rating" value="<%= fi %>" class="hidden"
+                                            <%=(userReview && userReview.rating===fi) ? 'checked' : '' %>>
+                                        <% if(userReview && fi <=userReview.rating) { %>
+                                            <i class="ri-star-fill text-amber-400 text-3xl transition-colors star-icon"
+                                                data-val="<%= fi %>"></i>
+                                            <% } else { %>
+                                                <i class="ri-star-line text-gray-200 text-3xl transition-colors star-icon"
+                                                    data-val="<%= fi %>"></i>
+                                                <% } %>
+                                    </label>
+                                    <% } %>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block mb-1.5 text-sm font-bold text-gray-600">Comment <span
+                                    class="text-gray-400 font-normal">(optional)</span></label>
+                            <textarea name="comment" rows="3" maxlength="500"
+                                placeholder="Share your thoughts about this product..."
+                                class="w-full border border-gray-200 bg-gray-50 py-2.5 px-4 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-colors resize-none"><%= userReview ? (userReview.comment || '') : '' %></textarea>
+                        </div>
+
+                        <button type="submit"
+                            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl text-sm shadow-md transition-colors">
+                            <% if(userReview) { %>Update Review<% } else { %>Submit Review<% } %>
+                        </button>
+                    </form>
+
+                    <p class="text-xs text-gray-400 mt-4 text-center leading-relaxed">
+                        Only customers who have <strong>purchased</strong> this product can leave a review.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        var stars = document.querySelectorAll('.star-icon');
+        stars.forEach(function (star) {
+            star.addEventListener('mouseover', function () {
+                var val = parseInt(star.dataset.val);
+                stars.forEach(function (s, i) {
+                    if (i < val) {
+                        s.classList.add('text-amber-400');
+                        s.classList.remove('text-gray-200');
+                        s.classList.remove('ri-star-line');
+                        s.classList.add('ri-star-fill');
+                    } else {
+                        s.classList.remove('text-amber-400');
+                        s.classList.add('text-gray-200');
+                        s.classList.add('ri-star-line');
+                        s.classList.remove('ri-star-fill');
+                    }
+                });
+            });
+            star.addEventListener('click', function () {
+                var val = parseInt(star.dataset.val);
+                var radio = document.querySelector('input[name="rating"][value="' + val + '"]');
+                if (radio) radio.checked = true;
+            });
+        });
+        document.getElementById('star-group').addEventListener('mouseleave', function () {
+            var checked = document.querySelector('input[name="rating"]:checked');
+            var val = checked ? parseInt(checked.value) : 0;
+            stars.forEach(function (s, i) {
+                if (i < val) {
+                    s.classList.add('text-amber-400');
+                    s.classList.remove('text-gray-200');
+                    s.classList.remove('ri-star-line');
+                    s.classList.add('ri-star-fill');
+                } else {
+                    s.classList.remove('text-amber-400');
+                    s.classList.add('text-gray-200');
+                    s.classList.add('ri-star-line');
+                    s.classList.remove('ri-star-fill');
+                }
+            });
+        });
+    </script>
+
+    <%- include('./partials/footer') %>

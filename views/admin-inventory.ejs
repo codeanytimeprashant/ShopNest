@@ -1,0 +1,133 @@
+<%- include('./partials/header') %>
+
+    <div class="min-h-screen bg-gray-50/50 flex flex-col pt-20 pb-20">
+        <div class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 mt-10">
+
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <h1 class="text-3xl font-extrabold text-gray-900 font-sans tracking-tight">Inventory</h1>
+                    <p class="text-gray-500 mt-1 font-medium text-sm">
+                        <%= products.length %> product<%= products.length !==1 ? 's' : '' %> in store
+                    </p>
+                </div>
+                <div class="flex gap-3">
+                    <a href="/owners/admin/dashboard"
+                        class="text-gray-500 hover:text-gray-900 font-semibold text-sm transition-colors flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-xl bg-white">
+                        <i class="ri-arrow-left-line"></i> Dashboard
+                    </a>
+                    <a href="/owners/admin"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-semibold text-sm transition-colors shadow-md flex items-center gap-2">
+                        <i class="ri-add-line"></i> Add Product
+                    </a>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+                <% if (products.length===0) { %>
+                    <div class="p-16 text-center">
+                        <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="ri-box-3-line text-4xl text-gray-400"></i>
+                        </div>
+                        <p class="text-gray-500 font-medium">No products found. Add your first product!</p>
+                        <a href="/owners/admin"
+                            class="inline-block mt-4 bg-blue-600 text-white px-5 py-2.5 rounded-xl font-semibold text-sm">Add
+                            Product</a>
+                    </div>
+                    <% } else { %>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead>
+                                    <tr class="bg-gray-50/50 border-b border-gray-100">
+                                        <th class="p-5 font-bold text-gray-700 text-sm tracking-wide">Product</th>
+                                        <th class="p-5 font-bold text-gray-700 text-sm tracking-wide">Category</th>
+                                        <th class="p-5 font-bold text-gray-700 text-sm tracking-wide">Price</th>
+                                        <th class="p-5 font-bold text-gray-700 text-sm tracking-wide">Discount</th>
+                                        <th class="p-5 font-bold text-gray-700 text-sm tracking-wide">Stock</th>
+                                        <th class="p-5 font-bold text-gray-700 text-sm tracking-wide text-center">
+                                            Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% products.forEach(product=> { %>
+                                        <tr
+                                            class="border-b border-gray-100/70 hover:bg-gray-50/30 transition-colors group">
+                                            <!-- Product Name + Image -->
+                                            <td class="p-5 flex items-center gap-4 min-w-[220px]">
+                                                <% if (product.image) { %>
+                                                    <div class="w-14 h-14 rounded-xl overflow-hidden shrink-0 flex items-center justify-center p-1"
+                                                        style="background-color: <%= product.bgcolor || '#f3f4f6' %>">
+                                                        <img src="data:image/jpeg;base64,<%= product.image.toString('base64') %>"
+                                                            alt="<%= product.name %>"
+                                                            class="w-full h-full object-contain">
+                                                    </div>
+                                                    <% } else { %>
+                                                        <div
+                                                            class="w-14 h-14 rounded-xl bg-gray-100 flex items-center justify-center shrink-0">
+                                                            <i class="ri-image-line text-gray-400 text-xl"></i>
+                                                        </div>
+                                                        <% } %>
+                                                            <div>
+                                                                <p
+                                                                    class="font-bold text-gray-900 text-sm leading-tight">
+                                                                    <%= product.name %>
+                                                                </p>
+                                                                <p class="text-xs text-gray-400 mt-0.5">
+                                                                    <%= product.brand || '—' %>
+                                                                </p>
+                                                            </div>
+                                            </td>
+                                            <td class="p-5">
+                                                <span
+                                                    class="px-2.5 py-1 bg-gray-100 text-gray-600 rounded-lg text-xs font-bold uppercase tracking-wide">
+                                                    <%= product.category || '—' %>
+                                                </span>
+                                            </td>
+                                            <td class="p-5 font-bold text-gray-900 text-sm">₹ <%= product.price ?
+                                                    product.price.toLocaleString() : '—' %>
+                                            </td>
+                                            <td
+                                                class="p-5 text-sm font-semibold <%= product.discount > 0 ? 'text-green-600' : 'text-gray-400' %>">
+                                                <%= product.discount> 0 ? '- ₹ ' + product.discount.toLocaleString() :
+                                                    '—' %>
+                                            </td>
+                                            <td class="p-5">
+                                                <span
+                                                    class="font-bold text-sm <%= product.stock === 0 ? 'text-red-500' : (product.stock < 5 ? 'text-orange-500' : 'text-gray-900') %>">
+                                                    <%= product.stock %>
+                                                        <% if (product.stock===0) { %><span
+                                                                class="text-xs font-normal text-red-400 ml-1">Out of
+                                                                stock</span>
+                                                            <% } %>
+                                                                <% if (product.stock> 0 && product.stock < 5) { %><span
+                                                                            class="text-xs font-normal text-orange-400 ml-1">Low</span>
+                                                                        <% } %>
+                                                </span>
+                                            </td>
+                                            <td class="p-5">
+                                                <div class="flex items-center justify-center gap-2">
+                                                    <a href="/owners/admin/products/<%= product._id %>/edit"
+                                                        class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 font-semibold text-xs transition-colors">
+                                                        <i class="ri-pencil-line"></i> Edit
+                                                    </a>
+                                                    <form action="/owners/admin/products/<%= product._id %>/delete"
+                                                        method="POST"
+                                                        onsubmit="return confirm('Delete this product permanently?')">
+                                                        <button type="submit"
+                                                            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-50 text-red-500 hover:bg-red-100 font-semibold text-xs transition-colors">
+                                                            <i class="ri-delete-bin-line"></i> Delete
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                        <% } %>
+            </div>
+
+        </div>
+    </div>
+
+    <%- include('./partials/footer') %>
