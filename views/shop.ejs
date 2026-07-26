@@ -31,6 +31,30 @@
             <p class="hidden sm:block text-sm text-gray-400 font-medium italic">Discover something new today ✨</p>
         </div>
 
+        <!-- Mobile Category Filter -->
+        <div class="md:hidden flex gap-2 overflow-x-auto pb-2 mb-2 -mx-1 px-1 scrollbar-none">
+            <a href="/shop?category=all&sortby=<%= currentSort %>&search=<%= searchQuery %>"
+                class="shrink-0 px-4 py-2 rounded-full text-sm font-semibold transition-all <%= currentCategory === 'all' ? 'bg-blue-600 text-white shadow-md' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50' %>">All</a>
+            <a href="/shop?category=Fashion&sortby=<%= currentSort %>&search=<%= searchQuery %>"
+                class="shrink-0 px-4 py-2 rounded-full text-sm font-semibold transition-all <%= currentCategory === 'Fashion' ? 'bg-blue-600 text-white shadow-md' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50' %>">Fashion</a>
+            <a href="/shop?category=Electronics&sortby=<%= currentSort %>&search=<%= searchQuery %>"
+                class="shrink-0 px-4 py-2 rounded-full text-sm font-semibold transition-all <%= currentCategory === 'Electronics' ? 'bg-blue-600 text-white shadow-md' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50' %>">Electronics</a>
+            <a href="/shop?category=Accessories&sortby=<%= currentSort %>&search=<%= searchQuery %>"
+                class="shrink-0 px-4 py-2 rounded-full text-sm font-semibold transition-all <%= currentCategory === 'Accessories' ? 'bg-blue-600 text-white shadow-md' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50' %>">Accessories</a>
+            <a href="/shop?category=Footwear&sortby=<%= currentSort %>&search=<%= searchQuery %>"
+                class="shrink-0 px-4 py-2 rounded-full text-sm font-semibold transition-all <%= currentCategory === 'Footwear' ? 'bg-blue-600 text-white shadow-md' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50' %>">Footwear</a>
+        </div>
+        <style>
+            .scrollbar-none::-webkit-scrollbar {
+                display: none;
+            }
+
+            .scrollbar-none {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+        </style>
+
         <div class="flex flex-col md:flex-row gap-8">
 
             <!-- Sidebar Filters -->

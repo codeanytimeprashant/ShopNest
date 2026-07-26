@@ -1,214 +1,201 @@
 <%- include('partials/header') %>
 
-<div class="min-h-screen bg-gradient-to-br from-blue-900 via-blue-700 to-blue-500 flex items-center justify-center px-8">
+    <div
+        class="min-h-screen bg-gradient-to-br from-blue-900 via-blue-700 to-blue-500 flex items-center justify-center px-4 md:px-8">
 
-    <!-- Main Container -->
-    <div class="w-full max-w-7xl bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl flex overflow-hidden">
+        <!-- Main Container -->
+        <div
+            class="w-full max-w-7xl bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl flex flex-col md:flex-row overflow-hidden">
 
-        <!-- LEFT SIDE -->
-        <div class="w-1/2 text-white p-16 flex flex-col justify-between">
+            <!-- LEFT SIDE -->
+            <div class="hidden md:flex w-full md:w-1/2 text-white p-8 md:p-16 flex-col justify-between">
 
-            <div>
+                <div>
 
-                <h1 class="text-5xl font-bold">
-                    🛍 ShopNest
-                </h1>
+                    <h1 class="text-5xl font-bold">
+                        🛍 ShopNest
+                    </h1>
 
-                <h2 class="text-4xl font-semibold mt-8 leading-tight">
-                    Shop Smarter.<br>
-                    Live Better.
-                </h2>
+                    <h2 class="text-4xl font-semibold mt-8 leading-tight">
+                        Shop Smarter.<br>
+                        Live Better.
+                    </h2>
 
-                <p class="mt-6 text-lg text-blue-100 leading-8">
+                    <p class="mt-6 text-lg text-blue-100 leading-8">
 
-                    Discover premium products with secure checkout,
-                    lightning-fast delivery and unbeatable prices.
+                        Discover premium products with secure checkout,
+                        lightning-fast delivery and unbeatable prices.
 
-                </p>
+                    </p>
+
+                </div>
+
+                <!-- Features -->
+
+                <div class="space-y-5 mt-12">
+
+                    <div class="flex items-center gap-3">
+
+                        ✅ Secure Payments
+
+                    </div>
+
+                    <div class="flex items-center gap-3">
+
+                        🚚 Fast Delivery
+
+                    </div>
+
+                    <div class="flex items-center gap-3">
+
+                        ⭐ Premium Products
+
+                    </div>
+
+                    <div class="flex items-center gap-3">
+
+                        ↩ Easy Returns
+
+                    </div>
+
+                </div>
 
             </div>
 
-            <!-- Features -->
+            <!-- RIGHT SIDE -->
 
-            <div class="space-y-5 mt-12">
+            <div
+                class="w-full md:w-1/2 bg-white rounded-t-3xl md:rounded-t-none md:rounded-l-3xl p-6 sm:p-10 md:p-14 flex flex-col justify-center">
 
-                <div class="flex items-center gap-3">
+                <% if(error.length> 0){ %>
+                    <div class="mb-6 p-4 rounded-xl bg-red-100 border border-red-300 text-red-700">
+                        <%= error %>
+                    </div>
+                    <% } %>
 
-                    ✅ Secure Payments
+                        <!-- Tabs -->
 
-                </div>
+                        <div class="flex rounded-xl overflow-hidden border border-gray-300 mb-8">
 
-                <div class="flex items-center gap-3">
+                            <button id="loginTab" class="w-1/2 py-3 bg-blue-600 text-white font-semibold transition">
+                                Login
+                            </button>
 
-                    🚚 Fast Delivery
+                            <button id="registerTab"
+                                class="w-1/2 py-3 bg-gray-100 text-gray-700 font-semibold transition">
+                                Register
+                            </button>
 
-                </div>
+                        </div>
 
-                <div class="flex items-center gap-3">
+                        <!-- LOGIN FORM -->
 
-                    ⭐ Premium Products
+                        <div id="loginForm">
 
-                </div>
+                            <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-center">
+                                Welcome Back 👋
+                            </h2>
 
-                <div class="flex items-center gap-3">
+                            <p class="text-center text-gray-500 mt-3 mb-8">
+                                Login to continue shopping
+                            </p>
 
-                    ↩ Easy Returns
+                            <form action="/users/login" method="POST" class="space-y-5">
 
-                </div>
+                                <input
+                                    class="w-full p-4 rounded-xl bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    type="email" name="email" placeholder="Email Address" required>
+
+                                <input
+                                    class="w-full p-4 rounded-xl bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    type="password" name="password" placeholder="Password" required>
+
+                                <button
+                                    class="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl font-semibold transition">
+
+                                    Login
+
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                        <!-- REGISTER FORM -->
+
+                        <div id="registerForm" class="hidden">
+
+                            <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-center">
+                                Create Account
+                            </h2>
+
+                            <p class="text-center text-gray-500 mt-3 mb-8">
+                                Join ShopNest and start shopping today.
+                            </p>
+
+                            <form action="/users/register" method="POST" class="space-y-5">
+
+                                <input
+                                    class="w-full p-4 rounded-xl bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    type="text" name="fullname" placeholder="Full Name" required>
+
+                                <input
+                                    class="w-full p-4 rounded-xl bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    type="email" name="email" placeholder="Email Address" required>
+
+                                <input
+                                    class="w-full p-4 rounded-xl bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    type="password" name="password" placeholder="Password" required>
+
+                                <button
+                                    class="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl font-semibold transition">
+
+                                    Create Account
+
+                                </button>
+
+                            </form>
+
+                        </div>
 
             </div>
 
         </div>
 
-        <!-- RIGHT SIDE -->
-
-<div class="w-1/2 bg-white rounded-l-3xl p-14 flex flex-col justify-center">
-
-    <% if(error.length > 0){ %>
-        <div class="mb-6 p-4 rounded-xl bg-red-100 border border-red-300 text-red-700">
-            <%= error %>
-        </div>
-    <% } %>
-
-    <!-- Tabs -->
-
-    <div class="flex rounded-xl overflow-hidden border border-gray-300 mb-8">
-
-        <button id="loginTab"
-            class="w-1/2 py-3 bg-blue-600 text-white font-semibold transition">
-            Login
-        </button>
-
-        <button id="registerTab"
-            class="w-1/2 py-3 bg-gray-100 text-gray-700 font-semibold transition">
-            Register
-        </button>
-
     </div>
 
-    <!-- LOGIN FORM -->
+    <script>
+        const loginTab = document.getElementById("loginTab");
+        const registerTab = document.getElementById("registerTab");
 
-    <div id="loginForm">
+        const loginForm = document.getElementById("loginForm");
+        const registerForm = document.getElementById("registerForm");
 
-        <h2 class="text-4xl font-bold text-center">
-            Welcome Back 👋
-        </h2>
+        loginTab.addEventListener("click", () => {
 
-        <p class="text-center text-gray-500 mt-3 mb-8">
-            Login to continue shopping
-        </p>
+            loginForm.classList.remove("hidden");
+            registerForm.classList.add("hidden");
 
-        <form action="/users/login" method="POST" class="space-y-5">
+            loginTab.classList.add("bg-blue-600", "text-white");
+            loginTab.classList.remove("bg-gray-100", "text-gray-700");
 
-            <input
-                class="w-full p-4 rounded-xl bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                type="email"
-                name="email"
-                placeholder="Email Address"
-                required>
+            registerTab.classList.remove("bg-blue-600", "text-white");
+            registerTab.classList.add("bg-gray-100", "text-gray-700");
 
-            <input
-                class="w-full p-4 rounded-xl bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                type="password"
-                name="password"
-                placeholder="Password"
-                required>
+        });
 
-            <button
-                class="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl font-semibold transition">
+        registerTab.addEventListener("click", () => {
 
-                Login
+            registerForm.classList.remove("hidden");
+            loginForm.classList.add("hidden");
 
-            </button>
+            registerTab.classList.add("bg-blue-600", "text-white");
+            registerTab.classList.remove("bg-gray-100", "text-gray-700");
 
-        </form>
+            loginTab.classList.remove("bg-blue-600", "text-white");
+            loginTab.classList.add("bg-gray-100", "text-gray-700");
 
-    </div>
+        });
+    </script>
 
-    <!-- REGISTER FORM -->
-
-    <div id="registerForm" class="hidden">
-
-        <h2 class="text-4xl font-bold text-center">
-            Create Account
-        </h2>
-
-        <p class="text-center text-gray-500 mt-3 mb-8">
-            Join ShopNest and start shopping today.
-        </p>
-
-        <form action="/users/register" method="POST" class="space-y-5">
-
-            <input
-                class="w-full p-4 rounded-xl bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                type="text"
-                name="fullname"
-                placeholder="Full Name"
-                required>
-
-            <input
-                class="w-full p-4 rounded-xl bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                type="email"
-                name="email"
-                placeholder="Email Address"
-                required>
-
-            <input
-                class="w-full p-4 rounded-xl bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                type="password"
-                name="password"
-                placeholder="Password"
-                required>
-
-            <button
-                class="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl font-semibold transition">
-
-                Create Account
-
-            </button>
-
-        </form>
-
-    </div>
-
-</div>
-
-    </div>
-
-</div>
-
-<script>
-const loginTab = document.getElementById("loginTab");
-const registerTab = document.getElementById("registerTab");
-
-const loginForm = document.getElementById("loginForm");
-const registerForm = document.getElementById("registerForm");
-
-loginTab.addEventListener("click", () => {
-
-    loginForm.classList.remove("hidden");
-    registerForm.classList.add("hidden");
-
-    loginTab.classList.add("bg-blue-600","text-white");
-    loginTab.classList.remove("bg-gray-100","text-gray-700");
-
-    registerTab.classList.remove("bg-blue-600","text-white");
-    registerTab.classList.add("bg-gray-100","text-gray-700");
-
-});
-
-registerTab.addEventListener("click", () => {
-
-    registerForm.classList.remove("hidden");
-    loginForm.classList.add("hidden");
-
-    registerTab.classList.add("bg-blue-600","text-white");
-    registerTab.classList.remove("bg-gray-100","text-gray-700");
-
-    loginTab.classList.remove("bg-blue-600","text-white");
-    loginTab.classList.add("bg-gray-100","text-gray-700");
-
-});
-</script>
-
-<%- include('partials/footer') %>
+    <%- include('partials/footer') %>
